@@ -1,7 +1,16 @@
 <div class="todo-container">
   <div class="todo-header">
     <h1>Todo List</h1>
-    <button class="btn-add" (click)="openCreateForm()">+ New Todo</button>
+    <div class="header-right">
+      @if (currentUser) {
+        <div class="user-info">
+          <img [src]="currentUser.picture" [alt]="currentUser.name" class="user-avatar" />
+          <span class="user-name">{{ currentUser.name }}</span>
+        </div>
+      }
+      <button class="btn-logout" (click)="onLogout()">Logout</button>
+      <button class="btn-add" (click)="openCreateForm()">+ New Todo</button>
+    </div>
   </div>
 
   <div class="search-bar">

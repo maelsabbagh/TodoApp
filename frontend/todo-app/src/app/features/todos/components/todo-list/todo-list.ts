@@ -1,7 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TodoService } from '../../../../core/services/todo.service';
+import { AuthService } from '../../../../core/services/auth.service';
 import { Todo, TodoCreateDto, TodoUpdateDto } from '../../../../core/models/todo.model';
 import { PagedResult } from '../../../../core/models/paged-result.model';
 import { QueryParameters } from '../../../../core/models/query-parameters.model';
@@ -27,7 +29,16 @@ export class TodoListComponent implements OnInit {
   todoToDeleteId: number | null = null;
   errorMessage: string = '';
 
-  constructor(private todoService: TodoService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private todoService: TodoService,
+    private authService: AuthService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  get currentUser() {
+    return this.authService.currentUser;
+  }
 
   ngOnInit(): void {
     this.loadTodos();
@@ -107,6 +118,11 @@ export class TodoListComponent implements OnInit {
     this.showConfirmDialog = false;
     this.todoToDeleteId = null;
   }
+
+  onLogout(): void {
+  this.authService.logout();
+  this.router.navigate(['/login']);
+}
 
   clearError(): void {
     this.errorMessage = '';
