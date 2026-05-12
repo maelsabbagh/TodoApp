@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SocialAuthService } from '@abacritt/angularx-social-login';
 import { TodoService } from '../../../../core/services/todo.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { Todo, TodoCreateDto, TodoUpdateDto } from '../../../../core/models/todo.model';
@@ -33,7 +32,6 @@ export class TodoListComponent implements OnInit {
   constructor(
     private todoService: TodoService,
     private authService: AuthService,
-    private socialAuthService: SocialAuthService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
@@ -122,10 +120,9 @@ export class TodoListComponent implements OnInit {
   }
 
   onLogout(): void {
-    this.socialAuthService.signOut();
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
+  this.authService.logout();
+  this.router.navigate(['/login']);
+}
 
   clearError(): void {
     this.errorMessage = '';

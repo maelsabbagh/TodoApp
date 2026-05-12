@@ -10,12 +10,14 @@ export interface GoogleUser {
   picture: string;
 }
 
+const USER_STORAGE_KEY = 'todo_app_user';
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/googleauth/login`;
-  private currentUserSubject = new BehaviorSubject<GoogleUser | null>(null);
+  private currentUserSubject = new BehaviorSubject<GoogleUser | null>(this.loadUserFromStorage());
 
   currentUser$ = this.currentUserSubject.asObservable();
 
@@ -31,11 +33,20 @@ export class AuthService {
 
   login(idToken: string): Observable<GoogleUser> {
     return this.http.post<GoogleUser>(this.apiUrl, { idToken }).pipe(
-      tap(user => this.currentUserSubject.next(user))
+      tap(user => {
+        localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+        this.currentUserSubject.next(user);
+      })
     );
   }
 
   logout(): void {
+    localStorage.removeItem(USER_STORAGE_KEY);
     this.currentUserSubject.next(null);
+  }
+
+  private loadUserFromStorage(): GoogleUser | null {
+    const stored = localStorage.getItem(USER_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : null;
   }
 }
