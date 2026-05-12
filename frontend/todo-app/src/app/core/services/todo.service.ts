@@ -9,7 +9,7 @@ import { QueryParameters } from '../models/query-parameters.model';
   providedIn: 'root'
 })
 export class TodoService {
-  private readonly apiUrl = 'http://localhost:5246/api/todos';
+  private readonly apiUrl = 'http://localhost:5246/api/todo';
 
   constructor(private http: HttpClient) {}
 

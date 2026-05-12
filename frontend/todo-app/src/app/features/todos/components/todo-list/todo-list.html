@@ -1,1 +1,72 @@
-<p>todo-list works!</p>
+<div class="todo-container">
+  <div class="todo-header">
+    <h1>Todo List</h1>
+    <button class="btn-add" (click)="openCreateForm()">+ New Todo</button>
+  </div>
+
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      placeholder="Search todos..."
+      (keyup.enter)="onSearch()"
+    />
+    <button class="btn-search" (click)="onSearch()">Search</button>
+  </div>
+
+  @if (errorMessage) {
+    <div class="error-message">
+      {{ errorMessage }}
+      <button class="btn-close-error" (click)="clearError()">✕</button>
+    </div>
+  }
+
+  @if (pagedResult) {
+    <div class="todo-list">
+      @if (pagedResult.items.length === 0) {
+        <div class="empty-state">No todos found.</div>
+      }
+
+      @for (todo of pagedResult.items; track todo.id) {
+        <app-todo-item
+          [todo]="todo"
+          (editClicked)="openEditForm($event)"
+          (deleteClicked)="onDeleteClicked($event)"
+        />
+      }
+
+      @if (pagedResult.totalPages > 1) {
+        <div class="pagination">
+          <button
+            [disabled]="!pagedResult.hasPreviousPage"
+            (click)="onPageChange(queryParams.pageNumber - 1)"
+          >
+            Previous
+          </button>
+          <span>Page {{ pagedResult.pageNumber }} of {{ pagedResult.totalPages }}</span>
+          <button
+            [disabled]="!pagedResult.hasNextPage"
+            (click)="onPageChange(queryParams.pageNumber + 1)"
+          >
+            Next
+          </button>
+        </div>
+      }
+    </div>
+  }
+</div>
+
+@if (showForm) {
+  <app-todo-form
+    [todoToEdit]="todoToEdit"
+    (formSubmitted)="onFormSubmitted($event)"
+    (formCancelled)="onFormCancelled()"
+  />
+}
+
+@if (showConfirmDialog) {
+  <app-confirm-dialog
+    (confirmed)="onDeleteConfirmed()"
+    (cancelled)="onDeleteCancelled()"
+  />
+}

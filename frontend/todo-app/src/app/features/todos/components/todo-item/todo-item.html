@@ -1,1 +1,22 @@
-<p>todo-item works!</p>
+<div class="todo-card" [class.completed]="todo.isCompleted">
+  <div class="todo-header">
+    <h3 class="todo-title">{{ todo.title }}</h3>
+    <span class="priority-badge" [class]="'priority-' + todo.priority.toLowerCase()">
+      {{ todo.priority }}
+    </span>
+  </div>
+
+  <p class="todo-description">{{ todo.description }}</p>
+
+  <div class="todo-footer">
+    <span class="todo-status">
+      {{ todo.isCompleted ? 'Completed' : 'Pending' }}
+    </span>
+    <span class="todo-date">{{ todo.createdAt | date: 'mediumDate' }}</span>
+  </div>
+
+  <div class="todo-actions">
+    <button class="btn-edit" (click)="onEdit()">Edit</button>
+    <button class="btn-delete" (click)="onDelete()">Delete</button>
+  </div>
+</div>
