@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TodoService } from '../../../../core/services/todo.service';
@@ -12,7 +12,7 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
 @Component({
   selector: 'app-todo-list',
   standalone: true,
-  imports: [FormsModule, TodoItemComponent, TodoFormComponent, ConfirmDialogComponent],
+  imports: [CommonModule, FormsModule, TodoItemComponent, TodoFormComponent, ConfirmDialogComponent],
   templateUrl: './todo-list.html',
   styleUrl: './todo-list.css'
 })
@@ -27,7 +27,7 @@ export class TodoListComponent implements OnInit {
   todoToDeleteId: number | null = null;
   errorMessage: string = '';
 
-  constructor(private todoService: TodoService) {}
+  constructor(private todoService: TodoService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadTodos();
@@ -36,8 +36,14 @@ export class TodoListComponent implements OnInit {
   loadTodos(): void {
     this.queryParams.searchTerm = this.searchTerm || undefined;
     this.todoService.getAll(this.queryParams).subscribe({
-      next: (result) => this.pagedResult = result,
-      error: (err) => this.errorMessage = err.message
+      next: (result) => {
+        this.pagedResult = result;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.errorMessage = err.message;
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -65,12 +71,12 @@ export class TodoListComponent implements OnInit {
     if (this.todoToEdit) {
       this.todoService.update(this.todoToEdit.id, dto as TodoUpdateDto).subscribe({
         next: () => { this.showForm = false; this.loadTodos(); },
-        error: (err) => this.errorMessage = err.message
+        error: (err) => { this.errorMessage = err.message; this.cdr.detectChanges(); }
       });
     } else {
       this.todoService.create(dto as TodoCreateDto).subscribe({
         next: () => { this.showForm = false; this.loadTodos(); },
-        error: (err) => this.errorMessage = err.message
+        error: (err) => { this.errorMessage = err.message; this.cdr.detectChanges(); }
       });
     }
   }
@@ -93,7 +99,7 @@ export class TodoListComponent implements OnInit {
         this.todoToDeleteId = null;
         this.loadTodos();
       },
-      error: (err) => this.errorMessage = err.message
+      error: (err) => { this.errorMessage = err.message; this.cdr.detectChanges(); }
     });
   }
 
