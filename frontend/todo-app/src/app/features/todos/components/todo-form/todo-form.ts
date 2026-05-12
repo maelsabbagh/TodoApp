@@ -34,14 +34,23 @@ export class TodoFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (!this.title.trim()) return;
+  if (!this.title.trim()) return;
 
-    const dto: TodoCreateDto | TodoUpdateDto = this.isEditMode
-      ? { title: this.title, description: this.description, priority: this.priority, isCompleted: this.isCompleted }
-      : { title: this.title, description: this.description, priority: this.priority };
+  const dto: TodoCreateDto | TodoUpdateDto = this.isEditMode
+    ? { 
+        title: this.title, 
+        description: this.description, 
+        priority: +this.priority,  // + operator converts string to number
+        isCompleted: this.isCompleted 
+      }
+    : { 
+        title: this.title, 
+        description: this.description, 
+        priority: +this.priority   // + operator converts string to number
+      };
 
-    this.formSubmitted.emit(dto);
-  }
+  this.formSubmitted.emit(dto);
+}
 
   onCancel(): void {
     this.formCancelled.emit();
