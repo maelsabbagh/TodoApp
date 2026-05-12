@@ -4,12 +4,13 @@ import { Observable } from 'rxjs';
 import { Todo, TodoCreateDto, TodoUpdateDto } from '../models/todo.model';
 import { PagedResult } from '../models/paged-result.model';
 import { QueryParameters } from '../models/query-parameters.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TodoService {
-  private readonly apiUrl = 'http://localhost:5246/api/todo';
+  private readonly apiUrl = `${environment.apiUrl}/todo`;
 
   constructor(private http: HttpClient) {}
 
